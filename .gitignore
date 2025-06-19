@@ -1,0 +1,15 @@
+# Compilación general
+*.o
+*.obj
+**/bin/
+**/obj/
+
+# Execution and temporal files
+*.dat
+*.tmp
+*.swp
+*.bak
+*~
+
+# Output directories
+**/DATA/

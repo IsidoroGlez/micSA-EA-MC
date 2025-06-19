@@ -1,0 +1,132 @@
+reset
+set auto
+set fit  noerrorscaling
+
+dir="DATA/"
+
+can=dir."xi_canonical_T1p1_NR512.dat"
+micro=dir."xi_microcanonical-6PER_T1p1_NR512.dat"
+
+# We fit log(t) as function of log(xi_12)
+
+f(x)=z*log(x)+con+D/x**1.12
+
+z=12
+fit [5:27] f(x) can u 2:(log($1)):3:(1e-20) xyerr via z,con,D
+
+# For micro we do t--> k*t --> log(k*t) = log(k) + log(t)
+
+g(x)=z*log(x)+con-log(k)+D/x**1.12
+
+k=6
+
+# Fit range changes value of k*
+
+fit [7:*] g(x) micro u 2:(log($1)):3:(1e-20) xyerr via k
+
+##############
+#COLOR PALETE
+##############
+PALETTE=0
+load "my_color_palete.gpt"
+
+###############
+# APS TERMINAL
+###############
+C=1.  # One column
+R=1.  # Square ratio
+load "APS_term.gpt"
+
+W=W*10
+H=H*10
+
+#############
+# MARGINS
+#############
+set lmargin at screen 12./W
+set rmargin at screen (1-1./W)
+set tmargin at screen (1-1./H)
+set bmargin at screen 7./H
+
+#############
+# OUTPUT
+############
+set output "fig5.tex"
+
+set multiplot
+
+############
+# ERRORBARS
+############
+set errorbars 2 lw 5
+
+############
+# AXIS
+############
+
+set xlabel '\footnotesize $\xi_{12}(t)$' offset screen 0,screen 6./H
+
+set ylabel sprintf("\\footnotesize$10[f(t;%.3f|\\Theta)-\\log(t_{\\mathrm{Mic.}})]$",k) offset screen 12./W
+
+set yrange [-0.75:1.6]
+set xrange [0:30.5]
+
+set format x '\scriptsize $%.0f$'
+set format y '\scriptsize $%.1f$'
+
+set tics scale 1.5
+set xtics 0,10,30 offset 0,0.5
+set ytics offset 0.7,0
+
+p micro u 2:((int($0)%3 == 0)? (g($2)-log($1))*10 : 1/0):3:(($3*((z/($2))-1.12*(D/$2**2.12)))*10) w xyerr pt 7 ps 1 lc rgb colorGet("c8") not, [7:*] 0 lt -1 lw 2 lc rgb colorGet("c1") not, micro u 2:((int($0)%3 == 0)? (g($2)-log($1))*10 : 1/0):3:(($3*((z/($2))-1.12*(D/$2**2.12)))*10) w xyerr pt 7 ps 1 lc rgb colorGet("c8") not
+
+##########
+# INSET
+##########
+set errorbars 1
+
+set lmargin at screen 14./W
+set rmargin at screen (1-40./W)
+set tmargin at screen (1-3./H)
+set bmargin at screen 50./H
+
+############
+# KEY
+###########
+unset key
+set label 1 '\footnotesize can.' at 3,second 15 center
+set label 2 '\footnotesize mic.SA' at 15,second 3.5 center
+
+set arrow 1 nohead from 10, second 5 to 5.5, second 7 lw 1.5
+set arrow 2 nohead from 3, second 13.5 to 4, second 9 lw 1.5
+
+############
+# AXIS
+############
+
+set logs x
+set y2range [-5:25.5]
+set xrange [*:*]
+
+unset xlabel
+unset ylabel
+set y2label '\footnotesize $\log(t)$' offset screen -11./W
+
+set format y ''
+set format y2 '\scriptsize $%.0f$'
+unset ytics
+set y2tics -5,10,30 offset screen -2./W mirror
+set format x '\scriptsize $10^{%T}$'
+set xtics add ( '\scriptsize $10$' 10, '\scriptsize $20$' 20, '\scriptsize $30$' 30)
+
+p can u 2:((int($0)%5==0)?log($1):1/0):3:(1e-20) w xyerr axis x1y2 pt 7 ps 1 lw 1.5 lc rgb colorGet("c6") t '\footnotesize Can.' , [5:27] f(x) axis x1y2 lt -1 lw 2 lc rgb colorGet("c5") not,\
+micro u 2:((int($0)%5==0)? log($1):1/0):3:(1e-20) w xyerr axis x1y2 pt 1 ps 1 lw 1.5 lc rgb colorGet("c7") t '\footnotesize Mic.' , [7:*] g(x) axis x1y2 lt -1 lw 2 lc rgb colorGet("c3") not
+
+unset multiplot
+
+set out
+#############
+# CREATE PDF
+#############
+!pdflatex fig5.tex
+!rm *.aux *.tex *convert* *.log *.eps

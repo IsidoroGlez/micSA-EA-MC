@@ -1,0 +1,62 @@
+############################
+#ColorBlind friendly palette
+############################
+colorSet(name, rgb) = sprintf("color_\%s = \%d", name, rgb)
+colorGet(name) = value(sprintf("color_\%s", name))
+
+
+if (PALETTE == 0 ){
+   eval colorSet("c1", 0x000000)  # BLACK
+   eval colorSet("c2", 0xE69F00)  # ORANGE
+   eval colorSet("c3", 0x56B4E9)  # SKY BLUE
+   eval colorSet("c4", 0x009E73)  # BLUISH GREEN
+   eval colorSet("c5", 0xF0E442)  # YELLOW
+   eval colorSet("c6", 0x0072B2)  # BLUE
+   eval colorSet("c7", 0xD55E00)  # VERMILION
+   eval colorSet("c8", 0xCC79A7)  # REDDISH PURPLE
+   eval colorSet("c9", 0xFFFFFF)  # WHITE (only use over other colors!!)
+}
+if (PALETTE == 1 ){ # GRAYSCALE
+   eval colorSet("c1", 0x000000)  # BLACK
+   eval colorSet("c2", 0xA2A2A2)  # ORANGE
+   eval colorSet("c3", 0x9D9D9D)  # SKY BLUE
+   eval colorSet("c4", 0x696969)  # BLUISH GREEN
+   eval colorSet("c5", 0xD5D5D5)  # YELLOW
+   eval colorSet("c6", 0x575757)  # BLUE
+   eval colorSet("c7", 0x767676)  # VERMILION
+   eval colorSet("c8", 0x979797)  # REDDISH PURPLE
+   eval colorSet("c9", 0xFFFFFF)  # WHITE (only use over other colors!!)
+}
+if (PALETTE == 2 ){ # PROTANOPIA
+   eval colorSet("c1", 0x000000)  # BLACK
+   eval colorSet("c2", 0xADAD00)  # ORANGE
+   eval colorSet("c3", 0xA8A8E9)  # SKY BLUE
+   eval colorSet("c4", 0x919173)  # BLUISH GREEN
+   eval colorSet("c5", 0xE6E641)  # YELLOW
+   eval colorSet("c6", 0x6868B2)  # BLUE
+   eval colorSet("c7", 0x7D7D00)  # VERMILION
+   eval colorSet("c8", 0x8B8BA6)  # REDDISH PURPLE
+   eval colorSet("c9", 0xFFFFFF)  # WHITE (only use over other colors!!)
+}
+if (PALETTE == 3 ){ # DEUTERANOPIA
+   eval colorSet("c1", 0x000000)  # BLACK
+   eval colorSet("c2", 0xBABA00)  # ORANGE
+   eval colorSet("c3", 0x9C9CEA)  # SKY BLUE
+   eval colorSet("c4", 0x838375)  # BLUISH GREEN
+   eval colorSet("c5", 0xE8E840)  # YELLOW
+   eval colorSet("c6", 0x5E5EB2)  # BLUE
+   eval colorSet("c7", 0x939300)  # VERMILION
+   eval colorSet("c8", 0x9A9AA4)  # REDDISH PURPLE
+   eval colorSet("c9", 0xFFFFFF)  # WHITE (only use over other colors!!)
+}
+if (PALETTE == 4 ){ # TRITANOPIA
+   eval colorSet("c1", 0x000000)  # BLACK
+   eval colorSet("c2", 0xEB9595)  # ORANGE
+   eval colorSet("c3", 0x3DBBBB)  # SKY BLUE
+   eval colorSet("c4", 0x289999)  # BLUISH GREEN
+   eval colorSet("c5", 0xFAD7D7)  # YELLOW
+   eval colorSet("c6", 0x007C7C)  # BLUE
+   eval colorSet("c7", 0xD75858)  # VERMILION
+   eval colorSet("c8", 0xC87F7F)  # REDDISH PURPLE
+   eval colorSet("c9", 0xFFFFFF)  # WHITE (only use over other colors!!)
+}

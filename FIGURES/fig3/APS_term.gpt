@@ -1,0 +1,4 @@
+W=C*8.5
+H=R*W
+set term epslatex color size W cm, H cm font "cmr,12" lw 2 standalone header \
+"\\usepackage{amsmath}"

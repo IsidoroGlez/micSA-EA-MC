@@ -1,0 +1,116 @@
+reset
+set auto
+set fit noerrorscaling
+
+dir="DATA/"
+
+##############
+#COLOR PALETE
+##############
+PALETTE=0
+load "my_color_palete.gpt"
+
+###############
+# APS TERMINAL
+###############
+C=1.  # One column
+R=1.  # Square ratio
+load "APS_term.gpt"
+
+W=W*10
+H=H*10
+
+#############
+# OUTPUT
+############
+set output "fig1.tex"
+
+#############
+# MARGINS
+#############
+#############
+# MARGINS
+#############
+set lmargin at screen 12./W
+set rmargin at screen (1-1./W)
+set tmargin at screen (1-1./H)
+set bmargin at screen 7./H
+
+
+############
+# DATA AND FITS
+###########
+
+can=dir."energy_canonical_T0p7_NR512.dat"
+micro=dir."energy_microcanonical-6PER_T0p7_NR512.dat"
+
+K=6.034
+
+a=-1.7
+A=0.09
+z=0.226
+f(x)=A*x**(-z)+a
+
+fit [1.5e7:*] f(x) can u 1:(-$2):3 yerror via A,z,a
+
+f2(x)=f(x)+A2*x**(-z2)
+
+fit [2e5:1.5e7] f2(x) can u 1:(-$2):3 yerror via A2,z2
+
+fit [1.7e2:*] f2(x) can u 1:(-$2):3 yerror via A2,z2, A,z,a
+
+############
+# AXIS
+############
+set tics scale 1.5
+
+set log x
+set xrange [1:1.1e11]
+
+set xlabel '\footnotesize $t$' offset screen 0, screen 6./H
+set format x '\scriptsize $10^{%T}$'
+set xtics add ('\scriptsize $1$' 1)
+set xtics offset 0,0.5
+
+set log y
+set yrange [3e-4:1.2e-1]
+set ylabel '\footnotesize $e(t)-e_{\infty}$' offset screen 12./W
+set format y '\scriptsize $10^{%T}$'
+set ytics offset 0.7,0
+set ytics add ('\scriptsize $1$' 1)
+
+#############
+# KEY
+############
+unset key
+set label 1 '\footnotesize can.' at 3e1, 1.1e-2 center
+
+set label 2 sprintf("\\footnotesize mic.SA $(k^*\\!=\\!%.3f)$",K) at 6e5, 8.8e-2 center
+
+set arrow 1 nohead from 25, 8.8e-2 to 1.8e3, 8.8e-2 lw 1.5
+set arrow 2 nohead from 3e1, 1.2e-2 to 3e1, 5.7e-2 lw 1.5
+
+############
+# ERRORBARS
+############
+set errorbars 2 lw 1
+
+############
+# PLOT
+############
+plot can u 1:((int($0)%7==0)? -$2-a : 1/0):3 w yerror pt 7 ps 0.75 lw 1 lc rgb colorGet("c6") t '\footnotesize Canonical',\
+     micro u (K*$1):((int($0+2)%3==0)? $2-a : 1/0):3 w yerror pt 1 ps 0.75 lw 1 lc rgb colorGet("c7") t '\footnotesize Microcanonical'
+
+
+###########
+# CLOSE
+###########
+
+set out
+
+#############
+# CREATE PDF
+#############
+!pdflatex fig1.tex
+!rm *.aux *.tex *conver* *.log *.eps
+

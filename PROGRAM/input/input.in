@@ -1,0 +1,15 @@
+./DATA/N6_walkers		output dir
+2500000		        	maxtime
+0				actual time
+91				number of measure times
+0				number metropolis steps before microcanonic simulation
+6				number of daemons/walkers
+512				number of replicas
+160				L
+2				flag
+0				seed_J
+0				seed_u
+0				seed_MC[0]
+0				seed_MC[1]
+0				seed_MC[2]
+0				seed_MC[3]

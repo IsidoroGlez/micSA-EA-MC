@@ -1,0 +1,419 @@
+reset
+set auto
+set fit noerrorscaling
+
+dir="DATA/"
+
+##############
+#COLOR PALETE
+##############
+PALETTE=0
+load "my_color_palete.gpt"
+
+###############
+# APS TERMINAL
+###############
+C=2.  # One column
+R=0.75  # Square ratio
+load "APS_term.gpt"
+
+#############
+# OUTPUT
+############
+set output "fig4.tex"
+
+############
+# MULTIPLOT
+############
+set multiplot
+
+###############################################################################
+#				PANEL A
+################################################################################
+
+#############
+# MARGINS
+#############
+set lmargin at screen 0.071
+set rmargin at screen 0.5
+set tmargin at screen 0.94
+set bmargin at screen 0.5
+
+
+############
+# DATA AND FITS
+###########
+
+can=dir."energy_canonical_T1p4_NR512.dat"
+micro=dir."energy_microcanonical-6PER_T1p4_NR512.dat"
+
+a=-1.607
+A=2.5
+z=0.9
+f(x)=A*x**(-z)+a
+
+fit [1e4:*] f(x) dir."energy_canonical_T1p4_NR512.dat" u 1:(-$2):3 yerror via A,z,a
+
+pr sprintf("a_0 = %.14g \\pm %.14g\n", a, a_err)
+pr sprintf("a_1 = %.14g \\pm %.14g\n", A, A_err)
+pr sprintf("z_1 = %.14g \\pm %.14g\n", z, z_err)
+
+############
+# AXIS
+############
+set tics scale 1.5
+
+unset xtics
+set log x2
+set x2range [1:1e7]
+
+set label 3 '\footnotesize $t$' at screen 0.282, screen 0.985
+set x2tics mirror
+set format x2 '\scriptsize $10^{%T}$'
+set x2tics add ('\scriptsize $1$' 1, '\scriptsize $10$' 10, '' 1e7)
+set x2tics offset 0,-0.5
+
+set log y
+set yrange [1.1e-8:1]
+set ylabel '\footnotesize $e(t)-e_{\infty}$' offset screen 0.07
+set format y '\scriptsize $10^{%T}$'
+set ytics add ('\scriptsize $1$' 1)
+set ytics offset 0.7,0
+
+#############
+# KEY
+############
+unset key
+set label 1 '\footnotesize can.' at second 3e3, first 1e-1 center
+set label 2 '\footnotesize mic.SA' at second 17, first 1e-3 center
+
+set arrow 1 nohead from second 6e1,first 1e-3 to second 500,first 1e-3 lw 1.5
+set arrow 2 nohead from second 3e3,first 5e-2 to second 3e3,first 2e-3 lw 1.5
+
+set label 4 '\footnotesize \textbf{a)}' at screen 0.025, screen 0.95
+
+############
+# ERRORBARS
+############
+set errorbars 2 lw 1
+
+############
+# PLOT
+############
+plot can u 1:(( (-$2-a)>3e-3 || int($0)%3==0)? -$2-a : 1/0):3 w yerror axis x2y1 pt 7 ps 0.75 lw 1 lc rgb colorGet("c6") t '\footnotesize Canonical',\
+     micro u 1:(( ($2-a)>3e-3 || int($0)%3==0)? $2-a : 1/0):3 w yerror axis x2y1 pt 1 ps 0.75 lw 1 lc rgb colorGet("c7") t '\footnotesize Microcanonical',\
+    [1e4:*] f(x)-a axis x2y1 lw 2 lc rgb colorGet("c5") not 
+
+###############################################################################
+#				PANEL B
+################################################################################
+
+#############
+# MARGINS
+#############
+set tmargin at screen 0.5
+set bmargin at screen 0.06
+
+############
+# DATA AND FITS
+###########
+
+can=dir."xi_canonical_T1p4_NR512.dat"
+micro=dir."xi_microcanonical-6PER_T1p4_NR512.dat"
+
+S1(t)=c0*exp(-t*b**0/tau) + c1*exp(-t*b**1/tau) + c2*exp(-t*b**2/tau) + c3*exp(-t*b**3/tau) + c4*exp(-t*b**4/tau) + c5*exp(-t*b**5/tau) + c6*exp(-t*b**6/tau)+ c7*exp(-t*b**7/tau)+c8*exp(-t*b**8/tau) 
+
+f(x)=C*(1-S1(x))
+
+b=2.5
+
+fit [8e6:*] C dir."xi_canonical_T1p4_NR512.dat" u 1:2:3 yerror via C
+
+tau=2.5e6
+
+fit [1e6:*] C*(1-c0*exp(-x/tau)) dir."xi_canonical_T1p4_NR512.dat" u 1:2:3 yerror via c0
+
+c1=0
+c8=0
+
+fit [1e3:*] f(x) dir."xi_canonical_T1p4_NR512.dat" u 1:2:3 yerror via c0,c2,c3,c4,c5,c6,c7
+
+fit [1e3:*] f(x) dir."xi_canonical_T1p4_NR512.dat" u 1:2:3 yerror via b,tau,c0,c2,c3,c4,c5,c6,c7
+
+pr sprintf("C = %.14g \\pm %.14g\n", C, C_err)
+pr sprintf("a_0 = %.14g \\pm %.14g\n", c0, c0_err)
+pr sprintf("a_2 = %.14g \\pm %.14g\n", c2, c2_err)
+pr sprintf("a_3 = %.14g \\pm %.14g\n", c3, c3_err)
+pr sprintf("a_4 = %.14g \\pm %.14g\n", c4, c4_err)
+pr sprintf("a_5 = %.14g \\pm %.14g\n", c5, c5_err)
+pr sprintf("a_6 = %.14g \\pm %.14g\n", c6, c6_err)
+pr sprintf("a_7 = %.14g \\pm %.14g\n", c7, c7_err)
+pr sprintf("tau = %.14g \\pm %.14g\n", tau, tau_err)
+pr sprintf("b = %.14g \\pm %.14g\n", b, b_err)
+
+
+############
+# AXIS
+############
+set log
+set tics scale 1.5
+
+set xrange [1:1e7]
+unset label 3
+unset x2tics
+set xlabel '\footnotesize $t$' offset 0,screen 0.04
+set format x '\scriptsize $10^{%T}$'
+set xtics add ('\scriptsize $1$' 1, '\scriptsize $10$' 10, '\scriptsize $10^7$' 1e7)
+set xtics offset 0,0.5 mirror
+
+set yrange [1:16]
+set ylabel '\footnotesize $\xi_{12}(t)$' offset screen 0.055
+set format y '\scriptsize $10^{%T}$'
+set ytics add ('\scriptsize $1$' 1, '\scriptsize $10$' 10)
+set ytics offset 0.7,0
+
+#############
+# KEY
+############
+unset key
+
+set label 1 '\footnotesize can.' at 3e3,1.8 center
+set label 2 '\footnotesize mic.SA' at 17, 4.5 center
+
+set arrow 1 nohead from 6e1,4.5 to 300,4.5 lw 1.5
+set arrow 2 nohead from 3e3,1.9 to 3e3,4.3 lw 1.5
+
+set label 3 '\footnotesize \textbf{b)}' at screen 0.025, screen 0.49
+
+############
+# ERRORBARS
+############
+set errorbars 2 lw 1
+
+############
+# PLOT
+############
+plot can u 1:( ( $2<3.8 || int($0)%3==0)? $2 : 1/0 ):3 w yerror pt 7 ps 0.75 lw 1 lc rgb colorGet("c6") t '\footnotesize Canonical',\
+     micro u 1:( ( $2<3.8 || int($0)%3==0)? $2 : 1/0 ):3 w yerror pt 1 ps 0.75 lw 1 lc rgb colorGet("c7") t '\footnotesize Microcanonical',\
+     [1e3:*] f(x) lw 2 lc rgb colorGet("c5") not
+
+
+###############################################################################
+#				PANEL C
+################################################################################
+
+#############
+# MARGINS
+#############
+set lmargin at screen 0.5
+set rmargin at screen 0.929
+set tmargin at screen 0.94
+set bmargin at screen 0.5
+
+############
+# AXIS
+############
+
+unset logs
+
+set label 3 '\footnotesize $\xi_{23}/\xi_{12}$' at screen 0.71, screen 0.985
+unset xlabel
+unset xtics
+set x2range [0.6:*]
+set x2tics mirror
+set format x2 '\scriptsize $%.1f$'
+set x2tics 0.8,0.2,2 offset 0,-0.5
+
+unset ylabel
+unset ytics
+set y2label '\footnotesize $\xi_{12}(t)$' offset -3
+set y2range [0.8:16]
+set log y2
+set y2tics mirror offset -0.7
+set format y2 '\scriptsize $%.0f$'
+
+#############
+# KEY
+############
+unset key
+set label 1 '\footnotesize can.' at second 1.27, second 3 center
+set label 2 '\footnotesize mic.SA' at second 1.55,second 1.2 center
+
+set arrow 1 nohead from second 1.27,second 2.8 to second 1.21,second 1.4 lw 1.5
+set arrow 2 nohead from second 1.43,second 1.2 to second 1.31,second 1.6 lw 1.5
+
+set label 4 '\footnotesize \textbf{c)}' at screen 0.957, screen 0.95
+
+############
+# ERRORBARS
+############
+set errorbars 2 lw 1
+
+############
+# PLOT
+############
+plot can u 4:(( $2 < 3.8 || int($0)%8 == 0)? $2 : 1/0):5:3 w xyerror axis x2y2 pt 7 ps 0.75 lc rgb colorGet("c6") t '\footnotesize Canonical',\
+     micro u 4:(( $2 < 3.8 || int($0+5)%8 == 0)? $2 : 1/0):5:3 w xyerror axis x2y2 pt 1 ps 0.75 lw 1 lc rgb colorGet("c7") t '\footnotesize Microcanonical'
+
+
+######################################################################################################
+#                                               INSETS
+######################################################################################################
+
+####unset arrow
+
+####
+# A
+####
+
+#############
+# MARGINS
+#############
+
+set lmargin at screen 0.504
+set rmargin at screen 0.929
+
+set tmargin at screen 0.495
+set bmargin at screen 0.275
+
+############
+# DATA AND FITS
+###########
+
+can=dir."energy_canonical_T1p4_NR512.dat"
+micro=dir."energy_microcanonical-6PER_T1p4_NR512.dat"
+
+a=-1.607
+A=2.5
+z=0.9
+f(x)=A*x**(-z)+a
+
+fit [1e4:*] f(x) dir."energy_canonical_T1p4_NR512.dat" u 1:(-$2):3 yerror via A,z,a
+
+K=5.904
+
+############
+# AXIS
+############
+unset label
+
+set tics scale 1.5
+
+set xrange [6e3:*]
+set log x
+unset x2tics
+set xtics mirror
+unset xlabel
+
+set format x ""
+
+unset log y
+unset log y2
+set yrange [-1e-4:8e-5]
+set y2range [-1e-4:8e-5]
+set format y2 '\scriptsize $%1.0t$'
+set y2tics -8e-5,4e-5,8e-5 offset -0.75
+
+set y2label '\footnotesize$10^{5}\,\delta_e(t;\,k^*)$' offset -3
+unset ylabel
+set format y ""
+
+#############
+# KEY
+############
+unset key
+
+set label 1 '\footnotesize \textbf{d)}' at screen 0.957, screen 0.495
+
+############
+# PLOT
+############
+plot 0 axis x1y1 lt -1 lw 2 lc rgb colorGet("c1") not, micro u (K*$1):((int($0)%1==0)? $2-f(K*$1) : 1/0):3 w yerror axis x1y1 pt 7 ps 1 lc rgb colorGet("c8") not
+
+
+####
+# B
+####
+
+#############
+# MARGINS
+#############
+
+set bmargin at screen 0.06
+set tmargin at screen 0.275
+
+############
+# DATA AND FITS
+###########
+can=dir."xi_canonical_T1p4_NR512.dat"
+micro=dir."xi_microcanonical-6PER_T1p4_NR512.dat"
+
+S1(t)=c0*exp(-t*b**0/tau) + c1*exp(-t*b**1/tau) + c2*exp(-t*b**2/tau) + c3*exp(-t*b**3/tau) + c4*exp(-t*b**4/tau) + c5*exp(-t*b**5/tau) + c6*exp(-t*b**6/tau)+ c7*exp(-t*b**7/tau)+c8*exp(-t*b**8/tau) 
+
+f(x)=C*(1-S1(x))
+
+b=2.5
+
+fit [8e6:*] C dir."xi_canonical_T1p4_NR512.dat" u 1:2:3 yerror via C
+
+tau=2.5e6
+
+fit [1e6:*] C*(1-c0*exp(-x/tau)) dir."xi_canonical_T1p4_NR512.dat" u 1:2:3 yerror via c0
+
+c1=0
+c8=0
+
+fit [1e3:*] f(x) dir."xi_canonical_T1p4_NR512.dat" u 1:2:3 yerror via c0,c2,c3,c4,c5,c6,c7
+
+fit [1e3:*] f(x) dir."xi_canonical_T1p4_NR512.dat" u 1:2:3 yerror via b,tau,c0,c2,c3,c4,c5,c6,c7
+
+############
+# AXIS
+############
+unset logs y
+
+set tics scale 1.5
+
+unset x2label
+unset x2tics
+
+set xtics autofreq mirror offset 0, screen 0.015
+set format x '\scriptsize $10^{%T}$'
+set xtics offset 0,0.5
+set xlabel '\footnotesize $t$' offset 0,screen 0.04
+
+set xtics
+unset ytics
+set format x2 ""
+set y2range [-1.6:1.1]
+set format y2 '\scriptsize $%.0f$'
+set y2label '\footnotesize$10\,\delta_{\xi_{12}}(t;\,k^*)$' offset -3
+set y2tics -1,1,1 mirror offset -0.75
+
+#############
+# KEY
+############
+unset key
+
+set label 1 '\footnotesize \textbf{e)}' at screen 0.957, screen 0.27
+unset label 3
+
+############
+# PLOT
+############
+plot 0 axis x1y2 lt -1 lw 2 lc rgb colorGet("c1") not, micro u (K*$1):((int($0)%2==0)? 10*($2-f(K*$1)) : 1/0):($3*10) w yerror axis x1y2 pt 7 ps 1 lc rgb colorGet("c8") not  
+
+
+###########
+# CLOSE
+###########
+unset multiplot
+
+set out
+
+#############
+# CREATE PDF
+#############
+!pdflatex fig4.tex
+!rm *.aux *.tex *conver* *.log *.eps
+
