@@ -6,12 +6,14 @@ This folder contains the source code of the simulation program for studing the 3
 
 ## Folder Structure
 
+```
 ├── Makefile		# Build system
 ├── include/ 		# Header files
 ├── input/ 		# Input files (beta, configuration, LUT, time lists)
 ├── src/ 		# Source code (C and CUDA)
 ├── obj/ 		# Object files (created after compilation)
 └── bin/ 		# Executable binary (created after compilation)
+```
 
 ---
 

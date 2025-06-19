@@ -49,12 +49,14 @@ At the end of each Gnuplot script, a cleanup command (rm) removes temporary file
 
 Each figure folder follows the same layout:
 
+```
 figX/
 ├── figX.gpt		# Gnuplot script
 ├── figX.pdf       	# Final generated figure
 ├── APS_term.gpt   	# Gnuplot formatting helpers
 ├── my_color_palete.gpt
 └── DATA/		# Raw data used for the figure
+```
 
 ## Notes
 

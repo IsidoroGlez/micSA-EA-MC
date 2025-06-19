@@ -8,10 +8,12 @@ The simulations and resulting figures correspond to [doi].
 
 ## Repository structure
 
+```
 ├── PROGRAM/		# Source code and headers for the simulation (see PROGRAM/README.md)
 ├── FIGURES/ 		# Plotting scripts, data, and final figures (see FIGURES/README.md)
 ├── .gitignore 		# Exclusion rules for temporary and compiled files
 └── README.md 		# This file
+```
 
 ---
 
